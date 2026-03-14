@@ -12,11 +12,17 @@ button {
 }
 
 .pixel-text {
-    font-family: monospace;           /* ensures uniform spacing */
-    font-size: 24px;                   /* bigger = more retro feel */
-    letter-spacing: 2px;               /* optional, space out letters */
-    
-    /* Force pixelated rendering */
-    -webkit-font-smoothing: none;      /* Chrome, Safari */
-    -moz-osx-font-smoothing: grayscale; /* Firefox on macOS */
+    font-family: monospace;
+    font-size: 24px;
+    letter-spacing: 2px;
+
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* 8-bit outline */
+    text-shadow:
+        1px 1px 0 #000,
+       -1px 1px 0 #000,
+        1px -1px 0 #000,
+       -1px -1px 0 #000;
 }
