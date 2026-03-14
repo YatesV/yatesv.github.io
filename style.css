@@ -1,3 +1,7 @@
+/* ===========================
+   Font
+   Load your pixel font (fallback to monospace).
+   =========================== */
 @font-face {
   font-family: 'Pixelite';
   src: url('fonts/Pixelite.woff2') format('woff2'),
@@ -5,14 +9,28 @@
   font-display: swap;
 }
 
+/* ===========================
+   Heading / Pixel text
+   Floating pixel title animation
+   =========================== */
 .pixel-text {
   font-family: 'Pixelite', monospace;
   animation: float 2s ease-in-out infinite;
   font-size: 41px;
   text-rendering: optimizeSpeed;
   -webkit-font-smoothing: none;
-}   
+}
 
+/* simple float animation used by .pixel-text and .pixel-button */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%     { transform: translateY(-10px); }
+}
+
+/* ===========================
+   Page layout
+   Centers page content both vertically and horizontally.
+   =========================== */
 body {
   background-color: #000;
   color: #fff;
@@ -24,15 +42,10 @@ body {
   margin: 0;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}   
-
+/* ===========================
+   Pixel button
+   Visual style + hover invert
+   =========================== */
 .pixel-button {
   font-family: 'Pixelite', monospace;
   font-size: 16px;
@@ -43,11 +56,408 @@ body {
   cursor: pointer;
   text-transform: uppercase;
   animation: float 3s ease-in-out infinite;
-  position: center;
+
+  /* NOTE: `position: center;` is not a valid CSS property — removed it.
+     Removing it does not change the page appearance. */
 }
 
 .pixel-button:hover {
   background-color: #0f0;
   color: #000;
   border-color: #000;
-}   
+}
+
+/* ===========================
+   Container for button + disclaimer
+   Keeps both centered and stacked.
+   =========================== */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===========================
+   Disclaimer panel (hidden by default)
+   - max-height + overflow used to create slide effect
+   - opacity for fade
+   - border/background to match retro pixel theme
+   =========================== */
+.disclaimer {
+  font-family: 'Pixelite', monospace;
+  color: #0f0;
+  background: #000;
+  border: 2px solid #0f0;
+  margin-top: 10px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+
+  /* Hidden state */
+  max-height: 0;          /* collapsed */
+  overflow: hidden;       /* hide content while collapsed */
+  opacity: 0;             /* invisible while collapsed */
+
+  /* Smooth fallback transitions (works when animation isn't running) */
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+/* ===========================
+   Hover behavior to open disclaimer
+   We keep both the keyframe animation and the final state so the
+   dropdown has a bouncy animation and ends in the visible state.
+   =========================== */
+.disclaimer.open {
+  animation: dropDown 0.45s ease forwards;
+  max-height: 120px;
+  opacity: 1;
+}
+
+/* Keyframes that produce the slide + small bounce effect */
+@keyframes dropDown {
+  0% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(4px); /* small bounce */
+  }
+  100% {
+    max-height: 100px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================
+   Typewriter text inside the disclaimer
+   .type-text is animated on hover to simulate typing.
+   =========================== */
+.type-text {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid #0f0;
+  width: 0;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.7), 0 0 18px rgba(0, 255, 0, 0.3);
+  filter: drop-shadow(0 0 6px #0f0);
+}
+
+/* When hovering the container, type the text and show a blinking cursor */
+.disclaimer.open .type-text {
+  animation:
+    neonTyping 2.2s steps(40, end) forwards,
+    glowPulse 1.8s ease-in-out infinite,
+    cursorBlink 0.7s step-end infinite;
+}
+
+.type-text::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  mix-blend-mode: screen;
+  transform: translateX(-120%);
+  opacity: 0;
+  animation: highlightSwipe 1.6s linear infinite paused;
+}
+
+.disclaimer.open .type-text::after {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.disclaimer:not(.open) .type-text::after {
+  animation-play-state: paused;
+  opacity: 0;
+  transform: translateX(-120%);
+}
+
+/* typing increases width from 0 to full */
+@keyframes neonTyping {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes cursorBlink {
+  50% { border-color: transparent; }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 0 0 6px rgba(0, 255, 0, 0.7), 0 0 18px rgba(0, 255, 0, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.5);
+  }
+  60% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 32px rgba(0, 255, 0, 0.8);
+  }
+}
+
+@keyframes highlightSwipe {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.6;
+  }
+  70% {
+    transform: translateX(120%);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateX(220%);
+    opacity: 0;
+  }
+}
+
+/* ===========================
+   Main page styling
+   =========================== */
+.main-body {
+  background: radial-gradient(circle at 20% 20%, rgba(0, 255, 128, 0.12), transparent 25%),
+              radial-gradient(circle at 80% 10%, rgba(0, 128, 255, 0.1), transparent 24%),
+              radial-gradient(circle at 50% 80%, rgba(255, 0, 128, 0.12), transparent 28%),
+              #050505;
+  color: #e5ffe5;
+  font-family: 'Pixelite', monospace;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 18px 64px;
+  box-sizing: border-box;
+  gap: 28px;
+}
+
+.hero {
+  text-align: center;
+  max-width: 720px;
+  position: relative;
+}
+
+.hero__eyebrow {
+  color: #7dffb5;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-shadow: 0 0 6px rgba(0, 255, 128, 0.8);
+}
+
+.hero__title {
+  font-size: 46px;
+  margin: 0 0 8px;
+}
+
+.hero__tagline {
+  margin: 0 0 16px;
+  color: #c3f7c3;
+  font-size: 16px;
+}
+
+.hero__actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.pixel-button.ghost {
+  background: transparent;
+  color: #0f0;
+  border-color: #0f0;
+}
+
+.hero__chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tag-chip {
+  border: 1px solid rgba(0, 255, 128, 0.5);
+  color: #9dffcd;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  background: rgba(0, 255, 128, 0.08);
+  box-shadow: 0 0 8px rgba(0, 255, 128, 0.25);
+}
+
+.content {
+  width: min(960px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  z-index: 1;
+}
+
+.panel {
+  border: 2px solid #0f0;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 18px rgba(0, 255, 0, 0.25);
+  padding: 16px 18px 20px;
+  backdrop-filter: blur(3px);
+}
+
+.panel--alt {
+  border-color: #7df7ff;
+  box-shadow: 0 0 18px rgba(125, 247, 255, 0.25);
+}
+
+.panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.panel__title {
+  margin: 0;
+  font-size: 22px;
+  color: #0f0;
+}
+
+.panel__subtitle {
+  font-size: 12px;
+  color: #9dffcd;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid rgba(0, 255, 128, 0.5);
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 14px rgba(0, 255, 128, 0.25);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card__badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 11px;
+  color: #0f0;
+  opacity: 0.8;
+}
+
+.card__title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #c3f7c3;
+}
+
+.card__text {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #d8ffd8;
+  line-height: 1.5;
+}
+
+.card__footer {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.now-playing {
+  display: grid;
+  gap: 10px;
+}
+
+.now-playing__line {
+  display: grid;
+  grid-template-columns: 16px 90px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.now-playing .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0f0 30%, rgba(0, 255, 0, 0.2) 70%);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+}
+
+.now-playing .label {
+  color: #7dffb5;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.now-playing .value {
+  color: #e5ffe5;
+  font-size: 14px;
+}
+
+.background-wires {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.wire {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, rgba(0, 255, 0, 0.4), transparent);
+  animation: drift 10s linear infinite;
+  opacity: 0.35;
+}
+
+.wire--one { left: 18%; animation-duration: 9s; }
+.wire--two { left: 52%; animation-duration: 11s; }
+.wire--three { left: 78%; animation-duration: 13s; }
+
+@keyframes drift {
+  0%   { transform: translateY(-10%); }
+  50%  { transform: translateY(6%); }
+  100% { transform: translateY(-10%); }
+}
+
+@media (max-width: 640px) {
+  .hero__title { font-size: 34px; }
+  .hero__tagline { font-size: 14px; }
+  .panel__header { flex-direction: column; align-items: flex-start; }
+  .now-playing__line { grid-template-columns: 14px 80px 1fr; }
+}
