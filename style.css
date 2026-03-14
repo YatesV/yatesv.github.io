@@ -1,9 +1,53 @@
 @font-face {
   font-family: 'Pixelite';
-  src: url('fonts/Pixelite.ttf') format('truetype');
+  src: url('fonts/Pixelite.woff2') format('woff2'),
+       url('fonts/Pixelite.ttf') format('truetype');
   font-display: swap;
 }
 
 .pixel-text {
   font-family: 'Pixelite', monospace;
+  animation: float 2s ease-in-out infinite;
+  font-size: 41px;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: none;
+}   
+
+body {
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column; /* stack text and button vertically */
+  justify-content: center; /* vertical centering */
+  align-items: center;     /* horizontal centering */
+  height: 100vh;           /* full viewport height */
+  margin: 0;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}   
+
+.pixel-button {
+  font-family: 'Pixelite', monospace;
+  font-size: 16px;
+  padding: 12px 24px;
+  background-color: #000;
+  color: #0f0;
+  border: 2px solid #0f0;
+  cursor: pointer;
+  text-transform: uppercase;
+  animation: float 3s ease-in-out infinite;
+  position: center;
+}
+
+.pixel-button:hover {
+  background-color: #0f0;
+  color: #000;
+  border-color: #000;
 }   
